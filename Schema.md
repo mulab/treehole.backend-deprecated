@@ -63,6 +63,10 @@ However, to determine whether to show an anonymous user or real name, one should
   "hole_id": "545efe76a98d930012da6d4b",
   "from_user": "Alice",
   "reply_to": "545e28a80000000000000000",
+  "votes": {
+    "up": 10,
+    "down": 1
+  },
   "options": {
     "anonymous": true,
     "secret": false
