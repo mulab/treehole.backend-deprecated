@@ -2,7 +2,10 @@
 
 var _ = require('lodash');
 
-var validators = require('cloud/validators');
-_.each(validators, function (validator, className) {
+_.each(require('cloud/validators'), function (validator, className) {
   AV.Cloud.beforeSave(className, validator);
+});
+
+_.each(require('cloud/tsinghua-account'), function (func, funcName) {
+  AV.Cloud.define(funcName, func);
 });
