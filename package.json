@@ -1,0 +1,8 @@
+{
+  "name": "treehole.backend",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "lodash": "~3.7.0"
+  }
+}
