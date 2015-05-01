@@ -18,11 +18,17 @@ exports.tsinghuaAccountAuth = function (req, res) {
   if (_.isEmpty(username) || _.isEmpty(password)) {
     return res.error('Invalid parameters!');
   }
-  AV.Cloud.httpRequest({
-    method: 'POST',
-    url: 'https://id.tsinghua.edu.cn/thuser/authapi/login/ALL_ZHJW/127_0_0_1',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: { username: username, password: password }
+  AV.Query.doCloudQuery('select count(*) from _User where tsinghuaAccount=?', [username]).then(function (result) {
+    if (result.count >= 3) {
+      return AV.Promise.error('Tsinghua authentication: provided account exceeds authentication quota.');
+    } else {
+      return AV.Cloud.httpRequest({
+        method: 'POST',
+        url: 'https://id.tsinghua.edu.cn/thuser/authapi/login/ALL_ZHJW/127_0_0_1',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: { username: username, password: password }
+      });
+    }
   }).then(function (httpResponse) {
     var result = JSON.parse(httpResponse.text);
     if (result.status === 'RESTLOGIN_OK') {
@@ -36,7 +42,8 @@ exports.tsinghuaAccountAuth = function (req, res) {
     var userInfo = parseResult(httpResponse.text);
     return req.user.save({
       tsinghuaAuth: true,
-      tsinghuaAccountInfo: JSON.stringify(userInfo)
+      tsinghuaAccount: username,
+      tsinghuaAccountInfo: userInfo
     });
   }).then(function () {
     res.success();
