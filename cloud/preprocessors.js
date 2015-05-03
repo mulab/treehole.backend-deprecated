@@ -15,8 +15,13 @@ exports.Hole = function (req) {
 exports.Comment = function (req) {
   var comment = req.object;
   var user = req.user;
+  var hole;
   comment.set('realAuthor', user);
-  return comment.get('hole').fetch().then(function (hole) {
+  return comment.get('hole').fetch().then(function (result) {
+    hole = result;
+    hole.increment('commentCount');
+    return hole.save();
+  }).then(function () {
     if (!hole.get('anonymous')) {
       comment.set('author', user);
       return AV.Promise.as();
