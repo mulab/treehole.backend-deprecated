@@ -8,6 +8,10 @@ _.each(require('cloud/tsinghua-account'), function (func, funcName) {
   AV.Cloud.define(funcName, func);
 });
 
+_.each(require('cloud/like'), function (func, funcName) {
+  AV.Cloud.define(funcName, func);
+});
+
 // beforeSave handlers
 var validators = require('cloud/validators');
 var preprocessors = require('cloud/preprocessors');
