@@ -18,7 +18,7 @@ exports.tsinghuaAccountAuth = function (req, res) {
   if (_.isEmpty(username) || _.isEmpty(password)) {
     return res.error('Invalid parameters!');
   }
-  AV.Query.doCloudQuery('select count(*) from _User where tsinghuaAccount=?', [username]).then(function (result) {
+  AV.Query.doCloudQuery('select count(*) from _User where tsinghuaAccountUsername=? or tsinghuaAccountStudentID=?', [username, username]).then(function (result) {
     if (result.count >= 3) {
       return AV.Promise.error('Tsinghua authentication: provided account exceeds authentication quota.');
     } else {
@@ -42,7 +42,8 @@ exports.tsinghuaAccountAuth = function (req, res) {
     var userInfo = parseResult(httpResponse.text);
     return req.user.save({
       tsinghuaAuth: true,
-      tsinghuaAccount: username,
+      tsinghuaAccountUsername: userInfo.yhm,
+      tsinghuaAccountStudentID: userInfo.zjh,
       tsinghuaAccountInfo: userInfo
     });
   }).then(function () {
